@@ -60,14 +60,17 @@ fi
 
 source "${AKMODNV_PATH}"/kmods/nvidia-vars
 
+# NOTE: 32-bit (.i686) nvidia driver libs are intentionally omitted. The
+# negativo17 fedora-nvidia repo periodically ships i686 packages that are out
+# of sync with the x86_64 ones (nvidia-driver-common(x86-32) version skew),
+# which breaks dependency resolution. 64-bit drivers are installed; re-add the
+# .i686 libs (libnvidia-ml.i686, nvidia-driver-{cuda-,}libs.i686) for 32-bit
+# GPU support once upstream is consistent again.
 dnf5 install -y \
     libnvidia-fbc \
-    libnvidia-ml.i686 \
     libva-nvidia-driver \
     nvidia-driver \
     nvidia-driver-cuda \
-    nvidia-driver-cuda-libs.i686 \
-    nvidia-driver-libs.i686 \
     nvidia-settings \
     nvidia-container-toolkit \
     "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}"."${DIST_ARCH}".rpm

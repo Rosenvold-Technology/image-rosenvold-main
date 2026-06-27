@@ -9,7 +9,7 @@ beta := "45"
 # Defaults
 
 default_version := latest
-default_image := "core-desktop"
+default_image := "core"
 default_variant := "main"
 
 # Reused Values
@@ -39,8 +39,7 @@ image-file := justfile_dir() / "image-versions.yaml"
 
 [private]
 images := '(
-    ["core-server"]="base-atomic"
-    ["core-desktop"]="base-atomic"
+    ["core"]="base-atomic"
 )'
 
 # Fedora Versions
@@ -299,7 +298,15 @@ image-name-check $image_name $fedora_version $variant:
     fedora_version="$({{ just }} fedora-version-check $fedora_version || exit 1)"
     variant="$({{ just }} fedora-variant-check $variant || exit 1)"
 
-    echo "($image_name-$variant $source_image_name $fedora_version)"
+    # The "main" variant publishes under the bare image name (e.g. "core");
+    # other variants get a suffix (e.g. "core-nvidia").
+    if [[ "$variant" == "main" ]]; then
+        full_name="$image_name"
+    else
+        full_name="$image_name-$variant"
+    fi
+
+    echo "($full_name $source_image_name $fedora_version)"
 
 # Check Valid Fedora Version
 [group('Utility')]

@@ -9,12 +9,13 @@ A common main image for all other uBlue images, with minimal (but important) adj
 
 Deprecation Notice: Universal Blue is trimming support for intermediate images (such as those built in main) which are not used in our project's final images (Aurora, Bazzite, Bluefin).
 
-This repo builds two core images, both based on Fedora `base-atomic`:
+This repo builds a `core` image based on Fedora `base-atomic`, with Brave as
+the browser (Firefox excluded), in two variants:
 
-- **core-server** — headless base, no browser
-- **core-desktop** — core-server plus the Brave browser (Firefox excluded), intended as the base for desktop images (e.g. Hyprland) layered on top
+- **core** — standard build
+- **core-nvidia** — adds the open nvidia drivers
 
-Each is built in `main` and `nvidia` variants.
+It is intended as the base for desktop images (e.g. Hyprland) layered on top.
 
 # Documentation
 

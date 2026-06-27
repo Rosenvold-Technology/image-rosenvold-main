@@ -25,8 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         image_name:
-          - core-server
-          - core-desktop
+          - core
         image_variant:
           - main
           - nvidia

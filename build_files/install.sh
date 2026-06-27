@@ -118,9 +118,9 @@ curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub
 # Fedora Flatpak service is a part of the flatpak package, ensure it's overridden by moving to replace it at the end of the build.
 mv -f /usr/lib/systemd/system/flatpak-add-flathub-repos.service /usr/lib/systemd/system/flatpak-add-fedora-repos.service
 
-# Ship Brave (Origin) as the browser on the DESKTOP image only (core-server
-# stays headless). Firefox is excluded via packages.json. The repo file is
-# left in the image so the package updates with the system.
+# Ship Brave (Origin) as the browser on all core images (Firefox is excluded
+# via packages.json). The repo file is left in the image so the package
+# updates with the system.
 #
 # Brave's RPM installs to /opt/brave.com, but on atomic images /opt is a
 # symlink to /var/opt — runtime-only state that is NOT part of the image, so
@@ -128,18 +128,16 @@ mv -f /usr/lib/systemd/system/flatpak-add-flathub-repos.service /usr/lib/systemd
 # installing into a real /opt, relocating the payload into /usr/lib/opt
 # (which does ship in the image), restoring the /opt symlink, and recreating
 # /opt/brave.com at boot via tmpfiles.
-if [[ "${IMAGE_NAME}" == "core-desktop" ]]; then
-    curl --retry 3 -fsSLo /etc/yum.repos.d/brave-browser.repo \
-        https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+curl --retry 3 -fsSLo /etc/yum.repos.d/brave-browser.repo \
+    https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
 
-    OPT_TARGET="$(readlink /opt || echo var/opt)"
-    rm -rf /opt && mkdir -p /opt
-    dnf5 -y install brave-origin
-    mkdir -p /usr/lib/opt
-    mv /opt/brave.com /usr/lib/opt/brave.com
-    rm -rf /opt && ln -s "$OPT_TARGET" /opt
-    echo 'L  /opt/brave.com  -  -  -  -  /usr/lib/opt/brave.com' > /usr/lib/tmpfiles.d/brave-opt.conf
-fi
+OPT_TARGET="$(readlink /opt || echo var/opt)"
+rm -rf /opt && mkdir -p /opt
+dnf5 -y install brave-origin
+mkdir -p /usr/lib/opt
+mv /opt/brave.com /usr/lib/opt/brave.com
+rm -rf /opt && ln -s "$OPT_TARGET" /opt
+echo 'L  /opt/brave.com  -  -  -  -  /usr/lib/opt/brave.com' > /usr/lib/tmpfiles.d/brave-opt.conf
 
 # run common packages script
 /ctx/packages.sh
