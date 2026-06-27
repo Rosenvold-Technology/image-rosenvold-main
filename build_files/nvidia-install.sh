@@ -37,11 +37,6 @@ MULTILIB=(
 
 dnf5 install -y "${MULTILIB[@]}"
 
-# F44 does not need this: https://src.fedoraproject.org/rpms/mesa/c/f747343d109d2b691d3abcf4649cd10ad42d6578?branch=f44
-if [ "$FRELEASE" -lt 44 ]; then
-    dnf5 install -y mesa-va-drivers.i686
-fi
-
 # enable repos provided by ublue-os-nvidia-addons (not enabling fedora-nvidia-lts)
 dnf5 config-manager setopt fedora-nvidia.enabled=1 nvidia-container-toolkit.enabled=1
 
@@ -65,14 +60,6 @@ fi
 
 source "${AKMODNV_PATH}"/kmods/nvidia-vars
 
-if [[ "${IMAGE_NAME}" == "kinoite" ]]; then
-    VARIANT_PKGS="supergfxctl"
-elif [[ "${IMAGE_NAME}" == "silverblue" ]]; then
-    VARIANT_PKGS="gnome-shell-extension-supergfxctl-gex supergfxctl"
-else
-    VARIANT_PKGS=""
-fi
-
 dnf5 install -y \
     libnvidia-fbc \
     libnvidia-ml.i686 \
@@ -83,7 +70,6 @@ dnf5 install -y \
     nvidia-driver-libs.i686 \
     nvidia-settings \
     nvidia-container-toolkit \
-    ${VARIANT_PKGS} \
     "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}"."${DIST_ARCH}".rpm
 
 # Ensure the version of the Nvidia module matches the driver

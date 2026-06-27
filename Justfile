@@ -2,7 +2,6 @@ set unstable := true
 
 # Tags
 
-gts := "43"
 latest := "44"
 [private]
 beta := "45"
@@ -10,7 +9,7 @@ beta := "45"
 # Defaults
 
 default_version := latest
-default_image := "silverblue"
+default_image := "base"
 default_variant := "main"
 
 # Reused Values
@@ -35,16 +34,12 @@ image-file := justfile_dir() / "image-versions.yaml"
 [private]
 images := '(
     ["base"]="base-atomic"
-    ["silverblue"]="silverblue"
-    ["kinoite"]="kinoite"
 )'
 
 # Fedora Versions
 
 [private]
 fedora_versions := '(
-    ["gts"]="' + gts + '"
-    ["' + gts + '"]="' + gts + '"
     ["latest"]="' + latest + '"
     ["' + latest + '"]="' + latest + '"
     ["beta"]="' + beta + '"
@@ -258,10 +253,7 @@ gen-tags $image_name="" $fedora_version="" $variant="":
     SHA_SHORT="$(git rev-parse --short HEAD)"
 
     # Define Versions
-    if [[ "$fedora_version" -eq "{{ gts }}" ]]; then
-        COMMIT_TAGS=("$SHA_SHORT-gts")
-        BUILD_TAGS=("gts" "gts-$TIMESTAMP")
-    elif [[ "$fedora_version" -eq "{{ latest }}" ]]; then
+    if [[ "$fedora_version" -eq "{{ latest }}" ]]; then
         COMMIT_TAGS=("$SHA_SHORT-latest")
         BUILD_TAGS=("latest" "latest-$TIMESTAMP")
     elif [[ "$fedora_version" -eq "{{ beta }}" ]]; then
@@ -402,10 +394,10 @@ verify-container $container="" $registry="" $key="":
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
 
-    # ublue-os Public Key for Container Verification default
+    # Public Key for Container Verification default
     if [[ -z "${registry:-}" && -z "${key:-}"  ]]; then
         registry={{ IMAGE_REGISTRY }}
-        key="https://raw.githubusercontent.com/ublue-os/main/main/cosign.pub"
+        key="https://raw.githubusercontent.com/Rosenvold-Technology/image-rosenvold-main/main/cosign.pub"
     fi
 
     # Verify Container using cosign public key

@@ -1,3 +1,6 @@
 .idea
 *.iso
 *.iso-CHECKSUM*
+
+# cosign private signing key — must never be committed
+cosign.key

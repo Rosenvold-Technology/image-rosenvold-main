@@ -107,12 +107,6 @@ OVERRIDES=(
 dnf5 distro-sync --skip-unavailable -y --repo='fedora-multimedia' "${OVERRIDES[@]}"
 dnf5 versionlock add "${OVERRIDES[@]}"
 
-# Disable DKMS support in gnome-software
-if [[ "$IMAGE_NAME" == "silverblue" ]]; then
-    dnf5 remove -y \
-        gnome-software-rpm-ostree
-fi
-
 # Remove Fedora Flatpak and related packages
 dnf5 remove -y \
     fedora-flathub-remote
@@ -124,10 +118,11 @@ curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub
 # Fedora Flatpak service is a part of the flatpak package, ensure it's overridden by moving to replace it at the end of the build.
 mv -f /usr/lib/systemd/system/flatpak-add-flathub-repos.service /usr/lib/systemd/system/flatpak-add-fedora-repos.service
 
-# Prevent partial QT upgrades that may break SDDM/KWin
-if [[ "$IMAGE_NAME" == "kinoite" ]]; then
-    dnf5 versionlock add "qt6-*"
-fi
+# Ship Brave as the browser across all images (Firefox is excluded via packages.json).
+# Repo file is left in the image so the package updates with the system.
+curl --retry 3 -fsSLo /etc/yum.repos.d/brave-browser.repo \
+    https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+dnf5 -y install brave-origin
 
 # run common packages script
 /ctx/packages.sh
