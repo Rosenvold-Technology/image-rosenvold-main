@@ -394,10 +394,12 @@ verify-container $container="" $registry="" $key="":
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
 
-    # Public Key for Container Verification default
+    # ublue-os Public Key for Container Verification default.
+    # This verifies the UPSTREAM build inputs (akmods, akmods-nvidia-open from
+    # ghcr.io/ublue-os) which are signed by ublue-os — NOT this fork's own image.
     if [[ -z "${registry:-}" && -z "${key:-}"  ]]; then
         registry={{ IMAGE_REGISTRY }}
-        key="https://raw.githubusercontent.com/Rosenvold-Technology/image-rosenvold-main/main/cosign.pub"
+        key="https://raw.githubusercontent.com/ublue-os/main/main/cosign.pub"
     fi
 
     # Verify Container using cosign public key
