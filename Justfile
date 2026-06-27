@@ -9,7 +9,7 @@ beta := "45"
 # Defaults
 
 default_version := latest
-default_image := "base"
+default_image := "core-desktop"
 default_variant := "main"
 
 # Reused Values
@@ -33,7 +33,8 @@ image-file := justfile_dir() / "image-versions.yaml"
 
 [private]
 images := '(
-    ["base"]="base-atomic"
+    ["core-server"]="base-atomic"
+    ["core-desktop"]="base-atomic"
 )'
 
 # Fedora Versions
