@@ -57,13 +57,13 @@ variants := '(
 # Sudo/Podman/Just
 
 [private]
-SUDO_DISPLAY := env("DISPLAY", "") || env("WAYLAND_DISPLAY", "")
+SUDO_DISPLAY := if env("DISPLAY", "") != "" { env("DISPLAY", "") } else { env("WAYLAND_DISPLAY", "") }
 [private]
 SUDOIF := if `id -u` == "0" { "" } else if SUDO_DISPLAY != "" { which("sudo") + " --askpass" } else { which("sudo") }
 [private]
 just := just_executable()
 [private]
-PODMAN := which("podman") || require("podman-remote")
+PODMAN := if which("podman") != "" { which("podman") } else { require("podman-remote") }
 
 # Make things quieter by default
 
