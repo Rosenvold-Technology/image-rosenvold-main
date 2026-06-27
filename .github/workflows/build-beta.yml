@@ -9,6 +9,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
+# Explicitly grant the permissions the reusable build job needs, so they are
+# passed down even when the repo/org default_workflow_permissions is read-only.
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
   build:
     name: build
